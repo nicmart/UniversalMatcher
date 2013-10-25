@@ -1,7 +1,7 @@
 # PhpRulez
 [![Build Status](https://travis-ci.org/nicmart/PhpRulez.png?branch=master)](https://travis-ci.org/nicmart/PhpRulez)
 [![Coverage Status](https://coveralls.io/repos/nicmart/PhpRulez/badge.png?branch=master)](https://coveralls.io/r/nicmart/PhpRulez?branch=master)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/nicmart/PhpRulez/badges/quality-score.png?s=e06818508807c109a8c9354a73fc1a5227426c09)](https://scrutinizer-ci.com/g/nicmart/StringTemplate/)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/nicmart/PhpRulez/badges/quality-score.png?s=f6fa0286db5688f117537a53e1ac777565425197)](https://scrutinizer-ci.com/g/nicmart/PhpRulez/)
 
 A rule based matcher engine for php.
 
