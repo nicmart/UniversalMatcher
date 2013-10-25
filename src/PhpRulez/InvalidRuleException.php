@@ -1,19 +1,16 @@
 <?php
-/*
- * This file is part of PhpRulez.
- *
- * (c) 2013 Nicolò Martini
+/**
+ * This file is part of library-template
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
+ *
+ * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
 namespace PhpRulez;
 
-/**
- * Class FirstClass
- */
-class FirstClass
-{
 
-}
+class InvalidRuleException extends \InvalidArgumentException
+{
+} 
