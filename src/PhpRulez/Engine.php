@@ -16,17 +16,17 @@ namespace PhpRulez;
 class Engine
 {
     /**
-     * @var \SplObjectStorage
+     * @var array[callable]
+     */
+    private $matchers;
+
+    /**
+     * @var array[array]
      */
     private $rules;
 
     /**
-     * @var \SplObjectStorage[callable]
-     */
-    private $matchingFunctions;
-
-    /**
-     * @var null
+     * @var mixed
      */
     private $noMatchValue = null;
 
@@ -36,30 +36,66 @@ class Engine
     public function __construct($noMatchValue = null)
     {
         $this->noMatchValue = $noMatchValue;
-        $this->rules = new \SplObjectStorage;
-        $this->matchingFunctions = new \SplObjectStorage();
     }
 
     /**
-     * @param mixed $matchingFunction       A closure or an invokable object
-     * @param mixed $expected   The expected $rule returned value
-     * @param mixed $value      The value associated with this rule
+     * @param string $name
+     * @param callable $matcher
+     * @throws InvalidMatcherException
+     * @return $this
+     */
+    public function matcher($name, $matcher)
+    {
+        if (!is_callable($matcher))
+            throw new InvalidMatcherException('Matcher must be a callable');
+
+        $this->matchers[$name] = $matcher;
+
+        if (!isset($this->rules[$name]))
+            $this->rules[$name] = array();
+
+        return $this;
+    }
+
+    /**
+     * @param string|callable $matcher  The name of a registered matcher or a callable
+     * @param mixed $expected   The expected matching value
+     * @param mixed $value      The value that will be returned on match
      * @return $this            The current instance
      * @throws InvalidRuleException
      */
-    public function addRule($matchingFunction, $expected, $value)
+    public function rule($matcher, $expected, $value)
     {
-        if (!is_object($matchingFunction) || !method_exists($matchingFunction, '__invoke'))
-            throw new InvalidRuleException('Rules must be Closures or invocable objects');
-
-        if (!$this->matchingFunctions->contains($matchingFunction)) {
-            $this->matchingFunctions->attach($matchingFunction);
-            $this->rules->attach($matchingFunction, array());
+        if (is_callable($matcher)) {
+            if (is_string($matcher)) {
+                if (!isset($this->matchers[$matcher]))
+                    return $this->callbackRule($matcher, $expected, $value);
+            } else {
+                return $this->callbackRule($matcher, $expected, $value);
+            }
         }
 
-        $expectations = $this->rules[$matchingFunction];
-        $expectations[$expected] = $value;
-        $this->rules->attach($matchingFunction, $expectations);
+        $this->rules[$matcher][$expected] = $value;
+
+        return $this;
+    }
+
+    /**
+     * Create a rule providing directly a callable
+     *
+     * @param callable $callback
+     * @param mixed $expected
+     * @param mixed $value
+     * @return $this
+     */
+    public function callbackRule($callback, $expected, $value)
+    {
+        $key = is_string($callback) ? $callback : $this->getFreeKey();
+
+        $this
+            ->matcher($key, $callback)
+            ->rule($key, $expected, $value)
+        ;
 
         return $this;
     }
@@ -67,17 +103,41 @@ class Engine
     /**
      * Find a
      * @param mixed $value
-     * @return null
+     * @return mixed
      */
     public function match($value)
     {
-        foreach ($this->matchingFunctions as $matchingFunction) {
-            $matchingValue = $matchingFunction($value);
-            $map = $this->rules[$matchingFunction];
-            if (isset($map[$matchingValue]))
-                return $map[$matchingValue];
+        foreach ($this->matchers as $name => $matcher) {
+            $matchingValue = call_user_func($matcher, $value);
+
+            if (isset($this->rules[$name][$matchingValue]))
+                return $this->rules[$name][$matchingValue];
         }
 
         return $this->noMatchValue;
+    }
+
+    /**
+     * Render an Engine a callable => Can be nested in other engines!
+     * @param mixed $value
+     * @return mixed
+     */
+    public function __invoke($value)
+    {
+        return $this->match($value);
+    }
+
+    /**
+     * Generate a matcher key not already taken
+     * @return int
+     */
+    private function getFreeKey()
+    {
+        $index = count($this->matchers);
+
+        while (isset($this->matchers[$index]))
+            $index++;
+
+        return $index;
     }
 }

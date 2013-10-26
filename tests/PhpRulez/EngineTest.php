@@ -10,17 +10,13 @@
 namespace PhpRulez\Test;
 
 use PhpRulez\Engine;
+use PhpRulez\None;
 
 /**
  * Unit tests for class FirstClass
  */
 class EngineTest extends \PHPUnit_Framework_TestCase
 {
-    public function setUp()
-    {
-
-    }
-
     public function testMatch()
     {
         $engine = new Engine();
@@ -29,15 +25,69 @@ class EngineTest extends \PHPUnit_Framework_TestCase
         $lastLetter = function ($string) { return substr($string, -1); };
 
         $engine
-            ->addRule($firstLetter, 'a', 'starts with a')
-            ->addRule($firstLetter, 'x', 'starts with x')
-            ->addRule($lastLetter, 'b', 'finishes with b')
-            ->addRule($lastLetter, 'y', 'finishes with y')
+            ->matcher('first', $firstLetter)
+            ->matcher('last', $lastLetter)
+            ->rule('first', 'a', 'starts with a')
+            ->rule('first', 'x', 'starts with x')
+            ->rule('last', 'b', 'finishes with b')
+            ->rule('last', 'y', 'finishes with y')
         ;
 
         $this->assertEquals('starts with a', $engine->match('aaaaaab'));
         $this->assertEquals('starts with x', $engine->match('xaaaaay'));
         $this->assertEquals('finishes with b', $engine->match('caaaaab'));
         $this->assertEquals('finishes with y', $engine->match('caaaaay'));
+    }
+
+    public function testMatchWithNotFoundValue()
+    {
+        $engine = new Engine(new None);
+
+        $engine
+            ->rule('strtoupper', 'A', 'a')
+        ;
+
+        $this->assertInstanceOf('\PhpRulez\None', $engine->match('x'));
+    }
+
+    public function testCallbackRules()
+    {
+        $engine = new Engine();
+
+        $engine
+            ->callbackRule('strtolower', 'aaa', 'first')
+            ->callbackRule('strtolower', 'bbb', 'second')
+            ->callbackRule('strtoupper', 'AA', 'third')
+            ->callbackRule('strtoupper', 'BB', 'fourth')
+        ;
+
+        $this->assertEquals('first', $engine->match('AaA'));
+        $this->assertEquals('second', $engine->match('bBb'));
+        $this->assertEquals('third', $engine->match('Aa'));
+        $this->assertEquals('fourth', $engine->match('bB'));
+    }
+
+    public function testMatchWithCallableRules()
+    {
+        $engine = new Engine();
+
+        $firstLetter = function ($string) { return $string[0]; };
+        $lastLetter = function ($string) { return substr($string, -1); };
+
+        $engine
+            ->matcher('first', $firstLetter)
+            ->matcher('last', $lastLetter)
+            ->rule('first', 'a', 'starts with a')
+            ->rule('first', 'x', 'starts with x')
+            ->rule('last', 'b', 'finishes with b')
+            ->rule('last', 'y', 'finishes with y')
+            ->rule(function($s) { return $s[1]; }, 'w', 'second is w')
+        ;
+
+        $this->assertEquals('starts with a', $engine->match('awaaaab'));
+        $this->assertEquals('starts with x', $engine->match('xwaaaay'));
+        $this->assertEquals('finishes with b', $engine->match('cwaaaab'));
+        $this->assertEquals('finishes with y', $engine->match('caaaaay'));
+        $this->assertEquals('second is w', $engine->match('jwgsdjhagsd'));
     }
 }

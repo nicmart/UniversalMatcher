@@ -10,7 +10,11 @@
 
 namespace PhpRulez;
 
-
-class InvalidRuleException extends \InvalidArgumentException
+/**
+ * Class None
+ * An empty class that can be used when no value is matched in the engine
+ * @package PhpRulez
+ */
+class None
 {
 } 
