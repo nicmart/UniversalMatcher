@@ -1,7 +1,7 @@
 # Universal Matcher
-[![Build Status](https://travis-ci.org/nicmart/PhpRulez.png?branch=master)](https://travis-ci.org/nicmart/UniversalMatcher)
-[![Coverage Status](https://coveralls.io/repos/nicmart/PhpRulez/badge.png?branch=master)](https://coveralls.io/r/nicmart/UniversalMatcher?branch=master)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/nicmart/UniversalMatcher/badges/quality-score.png?s=f6fa0286db5688f117537a53e1ac777565425197)](https://scrutinizer-ci.com/g/nicmart/UniversalMatcher/)
+[![Build Status](https://travis-ci.org/nicmart/UniversalMatcher.png?branch=master)](https://travis-ci.org/nicmart/UniversalMatcher)
+[![Coverage Status](https://coveralls.io/repos/nicmart/UniversalMatcher/badge.png?branch=master)](https://coveralls.io/r/nicmart/UniversalMatcher?branch=master)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/nicmart/UniversalMatcher/badges/quality-score.png?s=48823d51d6b85ca07a7321415a2101b9cc071bb7)](https://scrutinizer-ci.com/g/nicmart/UniversalMatcher/)
 
 A rule based matcher engine for php.
 
