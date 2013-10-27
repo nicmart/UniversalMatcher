@@ -25,7 +25,7 @@ You want to partition Person objects following these criteria:
  - If age is less or equal than 21 returns "girl" or "boy", depending on the gender.
  - If age greather than 21, returns "man" or "woman"
  - If name is "Gabba" returns "Gabba Ehi!", in each case.
- - If she's not Gabba and has 100 years, returns "Centenary!"
+ - If she's not Gabba and has 100 years, returns "WTF, 100 years!"
 
 ```php
 use UniversalMatcher\FluentFunction;
@@ -39,9 +39,9 @@ $matcher
     ->defineMap('age', $f->method('getAge'))
     ->defineMap('age-gender', function(Person $p) { 
         return ($p->getAge() <= 21 ? 'young' : 'grown-up') . ':' . $p->gender]; })
-    ->defineMap('gender', $f->prop('gender'))
     
     ->rule('name', 'Gabba', 'Gabba EHI!')
+    ->rule('age', 100, 'WTF, 100 years!')
     ->rule('age-gender', 'young:female', 'A girl!')
     ->rule('age-gender', 'young:male', 'A boy!')
     ->rule('age-gender', 'grown-up:female', 'A woman')
@@ -58,6 +58,9 @@ echo $matcher(new Person('Gabba', '1983-09-06', 'female'));
 
 //Prints "A girl!"
 echo $matcher(new Person('Emma', '1994-01-01', 'female'));
+
+//Prints "WTF, 100 years!"
+echo $matcher(new Person('Archibald', '1913-01-02', 'male'));
 
 ```
 
