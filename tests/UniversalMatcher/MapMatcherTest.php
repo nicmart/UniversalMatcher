@@ -9,24 +9,24 @@
  */
 namespace UniversalMatcher\Test;
 
-use UniversalMatcher\HashMatcher;
+use UniversalMatcher\MapMatcher;
 use UniversalMatcher\None;
 
 /**
- * Unit tests for class HashMatcher
+ * Unit tests for class MapMatcher
  */
-class HashMatcherTest extends \PHPUnit_Framework_TestCase
+class MapMatcherTest extends \PHPUnit_Framework_TestCase
 {
     public function testMatch()
     {
-        $engine = new HashMatcher();
+        $engine = new MapMatcher();
 
         $firstLetter = function ($string) { return $string[0]; };
         $lastLetter = function ($string) { return substr($string, -1); };
 
         $engine
-            ->hasher('first', $firstLetter)
-            ->hasher('last', $lastLetter)
+            ->defineMap('first', $firstLetter)
+            ->defineMap('last', $lastLetter)
             ->rule('first', 'a', 'starts with a')
             ->rule('first', 'x', 'starts with x')
             ->rule('last', 'b', 'finishes with b')
@@ -41,7 +41,7 @@ class HashMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchWithNotFoundValue()
     {
-        $engine = new HashMatcher(new None);
+        $engine = new MapMatcher(new None);
 
         $engine
             ->rule('strtoupper', 'A', 'a')
@@ -52,7 +52,7 @@ class HashMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testCallbackRules()
     {
-        $engine = new HashMatcher();
+        $engine = new MapMatcher();
 
         $engine
             ->callbackRule('strtolower', 'aaa', 'first')
@@ -69,14 +69,14 @@ class HashMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchWithCallableRules()
     {
-        $engine = new HashMatcher();
+        $engine = new MapMatcher();
 
         $firstLetter = function ($string) { return $string[0]; };
         $lastLetter = function ($string) { return substr($string, -1); };
 
         $engine
-            ->hasher('first', $firstLetter)
-            ->hasher('last', $lastLetter)
+            ->defineMap('first', $firstLetter)
+            ->defineMap('last', $lastLetter)
             ->rule('first', 'a', 'starts with a')
             ->rule('first', 'x', 'starts with x')
             ->rule('last', 'b', 'finishes with b')

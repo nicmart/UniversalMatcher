@@ -11,18 +11,18 @@
 namespace UniversalMatcher\Test;
 
 use UniversalMatcher\FluentFunction\FluentFunction;
-use UniversalMatcher\HashMatcher;
+use UniversalMatcher\MapMatcher;
 
-class HashMatcherAndFluentFunctionTest extends \PHPUnit_Framework_TestCase
+class MapMatcherAndFluentFunctionTest extends \PHPUnit_Framework_TestCase
 {
     public function testMatcherWithFluentFunctionBuilder()
     {
-        $matcher = new HashMatcher;
+        $matcher = new MapMatcher;
         $f = new FluentFunction;
 
         $matcher
-            ->hasher('foo', $f->value('foo'))
-            ->hasher('barbaz', $f->value('bar')->value('baz'))
+            ->defineMap('foo', $f->value('foo'))
+            ->defineMap('barbaz', $f->value('bar')->value('baz'))
             ->rule('foo', 'foo1', 'aaa')
             ->rule('foo', 'foo2', 'bbb')
             ->rule('barbaz', 'baz1', 'ccc')
