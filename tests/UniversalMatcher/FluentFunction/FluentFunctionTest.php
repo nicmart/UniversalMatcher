@@ -50,6 +50,41 @@ class FluentFunctionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('baz', $f(array('foo' => array('bar' => 'baz'))));
     }
+
+    public function testLessThan()
+    {
+        $f = FluentFunction::f()->lessThan(12);
+
+        $this->assertTrue($f(11));
+        $this->assertFalse($f(12));
+    }
+
+    public function testLessOrEqualThan()
+    {
+        $f = FluentFunction::f()->lessOrEqualThan(12);
+
+        $this->assertTrue($f(11));
+        $this->assertTrue($f(12));
+        $this->assertFalse($f(13));
+    }
+
+    public function testGreaterThan()
+    {
+        $f = FluentFunction::f()->greaterThan(12);
+
+        $this->assertFalse($f(11));
+        $this->assertFalse($f(12));
+        $this->assertTrue($f(13));
+    }
+
+    public function testGreaterOrEqualThan()
+    {
+        $f = FluentFunction::f()->greaterOrEqualThan(12);
+
+        $this->assertFalse($f(11));
+        $this->assertTrue($f(12));
+        $this->assertTrue($f(13));
+    }
 }
 
 class Object

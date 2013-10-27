@@ -98,6 +98,49 @@ class FluentFunction
     }
 
     /**
+     * @param $value
+     * @return FluentFunction
+     */
+    public function lessThan($value)
+    {
+        return $this->func(function($previous) use ($value) {
+            return $previous < $value;
+        });
+    }
+
+    /**
+     * @param $value
+     * @return FluentFunction
+     */
+    public function lessOrEqualThan($value)
+    {
+        return $this->func(function($previous) use ($value) {
+            return $previous <= $value;
+        });
+    }
+
+    /**
+     * @param $value
+     * @return FluentFunction
+     */
+    public function greaterThan($value)
+    {
+        return $this->func(function($previous) use ($value) {
+            return $previous > $value;
+        });
+    }
+
+    /**
+     * @param $value
+     * @return FluentFunction
+     */
+    public function greaterOrEqualThan($value)
+    {
+        return $this->func(function($previous) use ($value) {
+            return $previous >= $value;
+        });
+    }
+    /**
      * @throws \DomainException
      * @return mixed
      */
