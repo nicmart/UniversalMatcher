@@ -1,7 +1,7 @@
-# PhpRulez
-[![Build Status](https://travis-ci.org/nicmart/PhpRulez.png?branch=master)](https://travis-ci.org/nicmart/PhpRulez)
-[![Coverage Status](https://coveralls.io/repos/nicmart/PhpRulez/badge.png?branch=master)](https://coveralls.io/r/nicmart/PhpRulez?branch=master)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/nicmart/PhpRulez/badges/quality-score.png?s=f6fa0286db5688f117537a53e1ac777565425197)](https://scrutinizer-ci.com/g/nicmart/PhpRulez/)
+# Universal Matcher
+[![Build Status](https://travis-ci.org/nicmart/PhpRulez.png?branch=master)](https://travis-ci.org/nicmart/UniversalMatcher)
+[![Coverage Status](https://coveralls.io/repos/nicmart/PhpRulez/badge.png?branch=master)](https://coveralls.io/r/nicmart/UniversalMatcher?branch=master)
+[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/nicmart/UniversalMatcher/badges/quality-score.png?s=f6fa0286db5688f117537a53e1ac777565425197)](https://scrutinizer-ci.com/g/nicmart/UniversalMatcher/)
 
 A rule based matcher engine for php.
 
@@ -14,7 +14,7 @@ Just create a composer.json file for your project:
 ```JSON
 {
     "require": {
-        "nicmart/php-rulez": "dev-master"
+        "nicmart/universal-matcher": "dev-master"
     }
 }
 ```

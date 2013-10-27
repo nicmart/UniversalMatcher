@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-namespace PhpRulez;
+namespace UniversalMatcher;
 
 /**
  * Class FirstClass

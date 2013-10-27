@@ -1,5 +1,5 @@
 {
-    "name": "nicmart/php-rulez",
+    "name": "nicmart/universal-matcher",
     "type": "library",
     "description": "A rules based matcher engine for php",
     "keywords": [],
@@ -18,8 +18,8 @@
     },
     "autoload": {
         "psr-0": {
-            "PhpRulez": "src/",
-            "PhpRulez\\Test": "tests"
+            "UniversalMatcher": "src/",
+            "UniversalMatcher\\Test": "tests"
         }
     }
 }

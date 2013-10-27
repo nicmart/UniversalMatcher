@@ -8,7 +8,7 @@
  * @author Nicolò Martini <nicmartnic@gmail.com>
  */
 
-namespace PhpRulez;
+namespace UniversalMatcher;
 
 /**
  * Class None
