@@ -9,17 +9,17 @@
  */
 namespace UniversalMatcher\Test;
 
-use UniversalMatcher\Matcher;
+use UniversalMatcher\HashMatcher;
 use UniversalMatcher\None;
 
 /**
- * Unit tests for class FirstClass
+ * Unit tests for class HashMatcher
  */
-class EngineTest extends \PHPUnit_Framework_TestCase
+class HashMatcherTest extends \PHPUnit_Framework_TestCase
 {
     public function testMatch()
     {
-        $engine = new Matcher();
+        $engine = new HashMatcher();
 
         $firstLetter = function ($string) { return $string[0]; };
         $lastLetter = function ($string) { return substr($string, -1); };
@@ -41,7 +41,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchWithNotFoundValue()
     {
-        $engine = new Matcher(new None);
+        $engine = new HashMatcher(new None);
 
         $engine
             ->rule('strtoupper', 'A', 'a')
@@ -52,7 +52,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testCallbackRules()
     {
-        $engine = new Matcher();
+        $engine = new HashMatcher();
 
         $engine
             ->callbackRule('strtolower', 'aaa', 'first')
@@ -69,7 +69,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchWithCallableRules()
     {
-        $engine = new Matcher();
+        $engine = new HashMatcher();
 
         $firstLetter = function ($string) { return $string[0]; };
         $lastLetter = function ($string) { return substr($string, -1); };
