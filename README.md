@@ -64,6 +64,20 @@ echo $matcher(new Person('Archibald', '1913-01-02', 'male'));
 
 ```
 
+## Performance considerations
+
+`MapMatcher` has been designed to minimize cycles between rules. Indeed, the cost of a match
+is independent on the number of rules, but only on the number of registered maps (and of course
+on the cost of each map).
+
+So there should not be issues if the number of rules is high but the number of maps remains low.
+
+Measuring the cost on php array accesses, we have, given the number of maps `M`, that
+```
+T(match) = O(M)
+```
+as you can see, the cost is linear on the number of maps.
+
 
 ## Install
 
