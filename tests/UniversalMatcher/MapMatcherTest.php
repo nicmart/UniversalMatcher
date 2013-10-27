@@ -90,4 +90,16 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('finishes with y', $engine->match('caaaaay'));
         $this->assertEquals('second is w', $engine->match('jwgsdjhagsd'));
     }
+
+    public function testMatcherWithNotScalarExpectation()
+    {
+        $matcher = new MapMatcher;
+
+        $matcher
+            ->defineMap('test', function() { return array('a', 'b'); })
+            ->rule('test', array('a', 'b'), 'Bingo!')
+        ;
+
+        $this->assertEquals('Bingo!', $matcher('any value'));
+    }
 }

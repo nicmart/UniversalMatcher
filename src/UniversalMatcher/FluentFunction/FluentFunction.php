@@ -140,6 +140,18 @@ class FluentFunction
             return $previous >= $value;
         });
     }
+
+    /**
+     * @param $c
+     * @return mixed
+     */
+    public function constant($c)
+    {
+        return $this->func(function() use ($c) {
+            return $c;
+        });
+    }
+
     /**
      * @throws \DomainException
      * @return mixed

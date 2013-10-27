@@ -85,6 +85,13 @@ class FluentFunctionTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($f(12));
         $this->assertTrue($f(13));
     }
+
+    public function testConstant()
+    {
+        $f = FluentFunction::f()->constant('aaa');
+
+        $this->assertEquals('aaa', $f('something'));
+    }
 }
 
 class Object

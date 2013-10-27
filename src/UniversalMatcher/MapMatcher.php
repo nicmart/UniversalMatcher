@@ -84,7 +84,7 @@ class MapMatcher implements Matcher
             }
         }
 
-        $this->rules[$map][$expected] = $value;
+        $this->rules[$map][$this->serializeExpected($expected)] = $value;
 
         return $this;
     }
@@ -115,7 +115,7 @@ class MapMatcher implements Matcher
     public function match($value)
     {
         foreach ($this->maps as $name => $hasher) {
-            $matchingValue = call_user_func($hasher, $value);
+            $matchingValue = $this->serializeExpected(call_user_func($hasher, $value));
 
             if (isset($this->rules[$name][$matchingValue]))
                 return $this->rules[$name][$matchingValue];
@@ -146,5 +146,17 @@ class MapMatcher implements Matcher
             $index++;
 
         return $index;
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    private function serializeExpected($value)
+    {
+        if (is_scalar($value))
+            return $value;
+
+        return serialize($value);
     }
 }
