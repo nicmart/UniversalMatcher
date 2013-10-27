@@ -9,7 +9,7 @@
  */
 namespace UniversalMatcher\Test;
 
-use UniversalMatcher\Engine;
+use UniversalMatcher\Matcher;
 use UniversalMatcher\None;
 
 /**
@@ -19,14 +19,14 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 {
     public function testMatch()
     {
-        $engine = new Engine();
+        $engine = new Matcher();
 
         $firstLetter = function ($string) { return $string[0]; };
         $lastLetter = function ($string) { return substr($string, -1); };
 
         $engine
-            ->matcher('first', $firstLetter)
-            ->matcher('last', $lastLetter)
+            ->hasher('first', $firstLetter)
+            ->hasher('last', $lastLetter)
             ->rule('first', 'a', 'starts with a')
             ->rule('first', 'x', 'starts with x')
             ->rule('last', 'b', 'finishes with b')
@@ -41,7 +41,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchWithNotFoundValue()
     {
-        $engine = new Engine(new None);
+        $engine = new Matcher(new None);
 
         $engine
             ->rule('strtoupper', 'A', 'a')
@@ -52,7 +52,7 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testCallbackRules()
     {
-        $engine = new Engine();
+        $engine = new Matcher();
 
         $engine
             ->callbackRule('strtolower', 'aaa', 'first')
@@ -69,14 +69,14 @@ class EngineTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchWithCallableRules()
     {
-        $engine = new Engine();
+        $engine = new Matcher();
 
         $firstLetter = function ($string) { return $string[0]; };
         $lastLetter = function ($string) { return substr($string, -1); };
 
         $engine
-            ->matcher('first', $firstLetter)
-            ->matcher('last', $lastLetter)
+            ->hasher('first', $firstLetter)
+            ->hasher('last', $lastLetter)
             ->rule('first', 'a', 'starts with a')
             ->rule('first', 'x', 'starts with x')
             ->rule('last', 'b', 'finishes with b')

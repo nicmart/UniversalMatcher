@@ -11,14 +11,14 @@
 namespace UniversalMatcher;
 
 /**
- * Class FirstClass
+ * Class Matcher
  */
-class Engine
+class Matcher
 {
     /**
      * @var array[callable]
      */
-    private $matchers;
+    private $hashFucntions;
 
     /**
      * @var array[array]
@@ -40,16 +40,16 @@ class Engine
 
     /**
      * @param string $name
-     * @param callable $matcher
+     * @param callable $hasher
      * @throws InvalidMatcherException
      * @return $this
      */
-    public function matcher($name, $matcher)
+    public function hasher($name, $hasher)
     {
-        if (!is_callable($matcher))
-            throw new InvalidMatcherException('Matcher must be a callable');
+        if (!is_callable($hasher))
+            throw new InvalidMatcherException('Hasher must be a callable');
 
-        $this->matchers[$name] = $matcher;
+        $this->hashFucntions[$name] = $hasher;
 
         if (!isset($this->rules[$name]))
             $this->rules[$name] = array();
@@ -58,24 +58,23 @@ class Engine
     }
 
     /**
-     * @param string|callable $matcher  The name of a registered matcher or a callable
+     * @param string|callable $hasher  The name of a registered hasher or a callable
      * @param mixed $expected   The expected matching value
      * @param mixed $value      The value that will be returned on match
      * @return $this            The current instance
-     * @throws InvalidRuleException
      */
-    public function rule($matcher, $expected, $value)
+    public function rule($hasher, $expected, $value)
     {
-        if (is_callable($matcher)) {
-            if (is_string($matcher)) {
-                if (!isset($this->matchers[$matcher]))
-                    return $this->callbackRule($matcher, $expected, $value);
+        if (is_callable($hasher)) {
+            if (is_string($hasher)) {
+                if (!isset($this->hashFucntions[$hasher]))
+                    return $this->callbackRule($hasher, $expected, $value);
             } else {
-                return $this->callbackRule($matcher, $expected, $value);
+                return $this->callbackRule($hasher, $expected, $value);
             }
         }
 
-        $this->rules[$matcher][$expected] = $value;
+        $this->rules[$hasher][$expected] = $value;
 
         return $this;
     }
@@ -93,7 +92,7 @@ class Engine
         $key = is_string($callback) ? $callback : $this->getFreeKey();
 
         $this
-            ->matcher($key, $callback)
+            ->hasher($key, $callback)
             ->rule($key, $expected, $value)
         ;
 
@@ -107,8 +106,8 @@ class Engine
      */
     public function match($value)
     {
-        foreach ($this->matchers as $name => $matcher) {
-            $matchingValue = call_user_func($matcher, $value);
+        foreach ($this->hashFucntions as $name => $hasher) {
+            $matchingValue = call_user_func($hasher, $value);
 
             if (isset($this->rules[$name][$matchingValue]))
                 return $this->rules[$name][$matchingValue];
@@ -118,7 +117,7 @@ class Engine
     }
 
     /**
-     * Render an Engine a callable => Can be nested in other engines!
+     * Render an Matcher a callable => Can be nested in other engines!
      * @param mixed $value
      * @return mixed
      */
@@ -128,14 +127,14 @@ class Engine
     }
 
     /**
-     * Generate a matcher key not already taken
+     * Generate a hasher key not already taken
      * @return int
      */
     private function getFreeKey()
     {
-        $index = count($this->matchers);
+        $index = count($this->hashFucntions);
 
-        while (isset($this->matchers[$index]))
+        while (isset($this->hashFucntions[$index]))
             $index++;
 
         return $index;
