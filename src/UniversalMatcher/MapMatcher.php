@@ -47,6 +47,17 @@ class MapMatcher implements Matcher
     }
 
     /**
+     * @param mixed $value
+     * @return $this
+     */
+    public function setNoMatchValue($value)
+    {
+        $this->noMatchValue = $value;
+
+        return $this;
+    }
+
+    /**
      * Register a map
      *
      * @param string $name
