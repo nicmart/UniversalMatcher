@@ -132,7 +132,20 @@ class MapMatcher implements Matcher
                 return $this->rules[$name][$matchingValue];
         }
 
-        return $this->noMatchValue;
+        return $this->noMatchValue();
+    }
+
+    /**
+     * @param string $mapName
+     * @param mixed $matchingValue
+     * @return mixed
+     */
+    public function matchByMapValue($mapName, $matchingValue)
+    {
+        if (isset($this->rules[$mapName][$matchingValue]))
+            return $this->rules[$mapName][$matchingValue];
+
+        return $this->noMatchValue();
     }
 
     /**

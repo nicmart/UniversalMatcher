@@ -50,6 +50,30 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\UniversalMatcher\None', $engine->match('x'));
     }
 
+    public function testMatchByMapValue()
+    {
+        $engine = new MapMatcher();
+
+        $firstLetter = function ($string) { return $string[0]; };
+        $lastLetter = function ($string) { return substr($string, -1); };
+
+        $engine
+            ->defineMap('first', $firstLetter)
+            ->defineMap('last', $lastLetter)
+            ->rule('first', 'a', 'starts with a')
+            ->rule('first', 'x', 'starts with x')
+            ->rule('last', 'b', 'finishes with b')
+            ->rule('last', 'y', 'finishes with y')
+        ;
+
+        $this->assertEquals('starts with a', $engine->matchByMapValue('first', 'a'));
+        $this->assertEquals('starts with x', $engine->matchByMapValue('first', 'x'));
+        $this->assertEquals('finishes with b', $engine->matchByMapValue('last', 'b'));
+        $this->assertEquals('finishes with y', $engine->matchByMapValue('last', 'y'));
+        $this->assertEquals($engine->noMatchValue(), $engine->matchByMapValue('last', 'xxx'));
+        $this->assertEquals($engine->noMatchValue(), $engine->matchByMapValue('xxx', 'xxx'));
+    }
+
     public function testCallbackRules()
     {
         $engine = new MapMatcher();
