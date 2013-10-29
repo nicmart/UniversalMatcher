@@ -16,9 +16,11 @@ namespace UniversalMatcher;
 class MapMatcher implements Matcher
 {
     /**
-     * @var array[callable]
+     * @var array[PrioritizedMap]
      */
     private $maps;
+
+    private $areMapsSorted = true;
 
     /**
      * @var array[array]
@@ -62,15 +64,17 @@ class MapMatcher implements Matcher
      *
      * @param string $name
      * @param callable $map
+     * @param int $priority
      * @throws InvalidMatcherException
      * @return $this
      */
-    public function defineMap($name, $map)
+    public function defineMap($name, $map, $priority = 0)
     {
         if (!is_callable($map))
             throw new InvalidMatcherException('Hasher must be a callable');
 
-        $this->maps[$name] = $map;
+        $this->areMapsSorted = false;
+        $this->maps[$name] = new PrioritizedMap($map, $priority, count($this->maps));
 
         if (!isset($this->rules[$name]))
             $this->rules[$name] = array();
@@ -125,8 +129,15 @@ class MapMatcher implements Matcher
      */
     public function match($value)
     {
-        foreach ($this->maps as $name => $hasher) {
-            $matchingValue = $this->serializeExpected(call_user_func($hasher, $value));
+        // Sort maps by descending priority if necessary
+        if (!$this->areMapsSorted) {
+            $this->sortMaps();
+            $this->areMapsSorted = true;
+        }
+
+        foreach ($this->maps as $name => $prioritizedMap) {
+            $map = $prioritizedMap->map;
+            $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
             if (isset($this->rules[$name][$matchingValue]))
                 return $this->rules[$name][$matchingValue];
@@ -182,5 +193,17 @@ class MapMatcher implements Matcher
             return $value;
 
         return serialize($value);
+    }
+
+    /**
+     * Sort maps by priority. On equal prioriy, first inserted wins
+     */
+    private function sortMaps()
+    {
+        uasort($this->maps, function(PrioritizedMap $m1, PrioritizedMap $m2) {
+            if ($p = $m2->priority - $m1->priority)
+                return $p;
+            return $m1->priority2 - $m2->priority2;
+        });
     }
 }

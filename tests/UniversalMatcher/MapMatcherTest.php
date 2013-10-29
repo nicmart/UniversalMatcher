@@ -39,6 +39,28 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('finishes with y', $engine->match('caaaaay'));
     }
 
+    public function testMatchWithPriorities()
+    {
+        $engine = new MapMatcher();
+
+        $firstLetter = function ($string) { return $string[0]; };
+        $lastLetter = function ($string) { return substr($string, -1); };
+
+        $engine
+            ->defineMap('first', $firstLetter, 10)
+            ->defineMap('last', $lastLetter, 100)
+            ->rule('first', 'a', 'starts with a')
+            ->rule('first', 'x', 'starts with x')
+            ->rule('last', 'b', 'finishes with b')
+            ->rule('last', 'y', 'finishes with y')
+        ;
+
+        $this->assertEquals('finishes with b', $engine->match('aaaaaab'));
+        $this->assertEquals('finishes with y', $engine->match('xaaaaay'));
+        $this->assertEquals('starts with a', $engine->match('aaaaaabc'));
+        $this->assertEquals('starts with x', $engine->match('xasdasd'));
+    }
+
     public function testMatchWithNotFoundValue()
     {
         $engine = new MapMatcher(new None);
