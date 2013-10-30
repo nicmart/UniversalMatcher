@@ -148,4 +148,19 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('Bingo!', $matcher('any value'));
     }
+
+    public function testPriority()
+    {
+        $matcher = new MapMatcher;
+
+        $matcher
+            ->defineMap('a', function(){})
+            ->defineMap('b', function(){}, 100)
+            ->defineMap('c', function(){}, -100)
+        ;
+
+        $this->assertEquals(0, $matcher->priority('a'));
+        $this->assertEquals(100, $matcher->priority('b'));
+        $this->assertEquals(-100, $matcher->priority('c'));
+    }
 }

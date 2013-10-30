@@ -83,6 +83,19 @@ class MapMatcher implements Matcher
     }
 
     /**
+     * @param $mapName
+     * @return mixed
+     * @throws \OutOfBoundsException
+     */
+    public function priority($mapName)
+    {
+        if (isset($this->maps[$mapName]))
+            return $this->maps[$mapName]->priority;
+
+        throw new \OutOfBoundsException("There is no map registered with the name \"$mapName\"");
+    }
+
+    /**
      * @param string|callable $map  The name of a registered map or a callable
      * @param mixed $expected   The expected matching value
      * @param mixed $value      The value that will be returned on match
