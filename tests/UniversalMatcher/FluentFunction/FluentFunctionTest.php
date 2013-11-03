@@ -51,6 +51,14 @@ class FluentFunctionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('baz', $f(array('foo' => array('bar' => 'baz'))));
     }
 
+    public function testRegexp()
+    {
+        $f = FluentFunction::f()->regexp('/^[0-9]xy[ab]+$/');
+
+        $this->assertTrue($f('7xyaaababab'));
+        $this->assertFalse($f('7xyaaabeabab'));
+    }
+
     public function testLessThan()
     {
         $f = FluentFunction::f()->lessThan(12);

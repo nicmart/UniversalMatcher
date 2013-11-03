@@ -98,6 +98,17 @@ class FluentFunction
     }
 
     /**
+     * @param string $regexp
+     * @return FluentFunction
+     */
+    public function regexp($regexp)
+    {
+        return $this->func(function($string) use ($regexp) {
+            return (bool) preg_match($regexp, $string);
+        });
+    }
+
+    /**
      * @param $value
      * @return FluentFunction
      */
