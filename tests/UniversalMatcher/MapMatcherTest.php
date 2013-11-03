@@ -92,8 +92,8 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('starts with x', $engine->matchByMapValue('first', 'x'));
         $this->assertEquals('finishes with b', $engine->matchByMapValue('last', 'b'));
         $this->assertEquals('finishes with y', $engine->matchByMapValue('last', 'y'));
-        $this->assertEquals($engine->noMatchValue(), $engine->matchByMapValue('last', 'xxx'));
-        $this->assertEquals($engine->noMatchValue(), $engine->matchByMapValue('xxx', 'xxx'));
+        $this->assertEquals($engine->getDefault(), $engine->matchByMapValue('last', 'xxx'));
+        $this->assertEquals($engine->getDefault(), $engine->matchByMapValue('xxx', 'xxx'));
     }
 
     public function testCallbackRules()

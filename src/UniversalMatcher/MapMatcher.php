@@ -30,31 +30,31 @@ class MapMatcher implements Matcher
     /**
      * @var mixed
      */
-    private $noMatchValue = null;
+    private $default = null;
 
     /**
      * @param null $noMatchValue
      */
     public function __construct($noMatchValue = null)
     {
-        $this->noMatchValue = $noMatchValue;
+        $this->default = $noMatchValue;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function noMatchValue()
+    public function getDefault()
     {
-        return $this->noMatchValue;
+        return $this->default;
     }
 
     /**
      * @param mixed $value
      * @return $this
      */
-    public function setNoMatchValue($value)
+    public function setDefault($value)
     {
-        $this->noMatchValue = $value;
+        $this->default = $value;
 
         return $this;
     }
@@ -123,14 +123,16 @@ class MapMatcher implements Matcher
      * @param callable $callback
      * @param mixed $expected
      * @param mixed $value
+     * @param int $priority
+     *
      * @return $this
      */
-    public function callbackRule($callback, $expected, $value)
+    public function callbackRule($callback, $expected, $value, $priority = 0)
     {
         $key = is_string($callback) ? $callback : $this->getFreeKey();
 
         $this
-            ->defineMap($key, $callback)
+            ->defineMap($key, $callback, $priority)
             ->rule($key, $expected, $value)
         ;
 
@@ -156,7 +158,7 @@ class MapMatcher implements Matcher
                 return $this->rules[$name][$matchingValue];
         }
 
-        return $this->noMatchValue();
+        return $this->getDefault();
     }
 
     /**
@@ -169,7 +171,7 @@ class MapMatcher implements Matcher
         if (isset($this->rules[$mapName][$matchingValue]))
             return $this->rules[$mapName][$matchingValue];
 
-        return $this->noMatchValue();
+        return $this->getDefault();
     }
 
     /**

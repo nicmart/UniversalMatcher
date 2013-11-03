@@ -35,9 +35,9 @@ abstract class PostMatcher implements Matcher
     /**
      * {@inheritdoc}
      */
-    public function noMatchValue()
+    public function getDefault()
     {
-        return $this->matcher->noMatchValue();
+        return $this->matcher->getDefault();
     }
 
     /**
@@ -46,7 +46,7 @@ abstract class PostMatcher implements Matcher
     public function match($value)
     {
         $match = $this->matcher->match($value);
-        if ($match === $this->noMatchValue())
+        if ($match === $this->getDefault())
             return $match;
 
         return $this->transform($this->matcher->match($value), $value, $this->matcher);

@@ -18,7 +18,7 @@ interface Matcher
      *
      * @return mixed
      */
-    public function noMatchValue();
+    public function getDefault();
 
     /**
      * Match a value and return the associated value

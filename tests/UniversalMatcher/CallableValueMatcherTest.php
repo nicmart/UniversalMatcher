@@ -33,7 +33,7 @@ class CallableValueMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher
             ->expects($this->any())
-            ->method('noMatchValue')
+            ->method('getDefault')
             ->will($this->returnValue('none'))
         ;
 

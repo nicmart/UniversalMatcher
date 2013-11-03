@@ -32,7 +32,7 @@ class PostMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->matcher
             ->expects($this->any())
-            ->method('noMatchValue')
+            ->method('getDefault')
             ->will($this->returnValue('none'))
         ;
 
@@ -60,7 +60,7 @@ class PostMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testNoMatchValue()
     {
-        $this->assertEquals($this->matcher->noMatchValue(), $this->postMatcher->noMatchValue());
+        $this->assertEquals($this->matcher->getDefault(), $this->postMatcher->getDefault());
     }
 
     public function testMatch()
