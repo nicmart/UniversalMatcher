@@ -83,6 +83,7 @@ $matcher
 ;
     
 ```
+### Priority
 `defineMap` accepts also a third optional argument to specify a priority. Default is `0`, and the rules
 that corresponds to higher priority maps will win. If two maps have the same priority, the first defined wins.
 ```php
@@ -92,7 +93,17 @@ $matcher
 ;
     
 ```
+You can retrieve the priority of a registered map with the `MapMatcher::priority` method. So
+ if you want, for example, to be sure to define a map with prioriy higher that the `baz` map,
+ you can do
+```php
+$matcher
+    ->defineMap('blah', 'strtoupper', $matcher->priority('baz') + 1)
+;
+    
+```
 
+### FluentFunction
 With a `FluentFunction` you can define and compose more easily some very common callables:
 
 ```php
@@ -131,15 +142,26 @@ A rule is composed of three arguments: the name of the map that will transform
 the input value, the expected returned value, and the value to be returned on match.
 
 The order of the rules, unlike the maps definitions, has no effect on matching.
-```
+```php
 $matcher
     ->rule('foo', 'bar', '$object->foo is bar')
     ->rule('foo', 'baz', '$object->foo is baz')
     ->rule('lowered', 'string', 'strtolower($value) is "string"'
 ;
 ```
+### Skip the map definition
 If a map is intended to be used with only one rule, you can skip the definition of the map
-and directly define the rule with the `
+and directly define the rule with the `callbackRule` method:
+```php
+$matcher->callbackRule(function($v) { /* Do something */ }, 'expected', 'returned value');
+```
+### Default return value
+You can set the return value of the matcher when no rules match with the `setDefault` method.
+Default is `null`.
+```php
+$matcher->setDefault('not-found!');
+```
+
 
 ## Performance considerations
 
@@ -155,10 +177,16 @@ T(match) = O(M)
 ```
 as you can see, the cost is linear on the number of maps.
 
+## Where is it used
+I use `UniversalMatcher` in the [compiler definitions](https://github.com/comperio/DomainSpecificQuery/blob/master/src/DSQ/Compiler/MatcherCompiler.php#L35) 
+of the [DomainSpecificQuery](http://github.com/comperio/DomainSpecificQuery)
+component. The Universal matcher allowed us to minimize rules checks while mantaining maximum
+flexibility on the compiler definitions.
+
 
 ## Install
 
-The best way to install PhpRulez is [through composer](http://getcomposer.org).
+The best way to install UniversalMatcher is [through composer](http://getcomposer.org).
 
 Just create a composer.json file for your project:
 
