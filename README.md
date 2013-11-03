@@ -10,59 +10,136 @@ in the matcher definition. The "match" is intended to be between the input value
 For installing instructions (composer!) please go to the end of this README
 
 ## Example
-Suppose you have a `Person` class that contains some basic datas about people:
+Instantiate the matcher, and define some maps:
 ```php
-class Person
-{
-    public $name, $birthdate, $gender;
-    
-    public function __construct($name, $birthdate, $gender) { ... }
-    
-    public function getAge() { ... }
-}
-```
-You want to partition Person objects following these criteria:
- - If age is less or equal than 21 returns "girl" or "boy", depending on the gender.
- - If age greather than 21, returns "man" or "woman"
- - If name is "Gabba" returns "Gabba Ehi!", in each case.
- - If she's not Gabba and has 100 years, returns "WTF, 100 years!"
-
-```php
-use UniversalMatcher\FluentFunction;
+use UniversalMatcher\FluentFunction\FluentFunction;
 use UniversalMatcher\MapMatcher;
-
 $f = new FluentFunction;
-$matcher = new MapMatcher;
 
-$matcher
-    ->defineMap('name', $f->prop('name'))
-    ->defineMap('age', $f->method('getAge'))
-    ->defineMap('age-gender', function(Person $p) { 
-        return ($p->getAge() <= 21 ? 'young' : 'grown-up') . ':' . $p->gender]; })
-    
-    ->rule('name', 'Gabba', 'Gabba EHI!')
-    ->rule('age', 100, 'WTF, 100 years!')
-    ->rule('age-gender', 'young:female', 'A girl!')
-    ->rule('age-gender', 'young:male', 'A boy!')
-    ->rule('age-gender', 'grown-up:female', 'A woman')
-    ->rule('age-gender', 'grown-up:male', 'A man')
+$matcher = (new MapMatcher)
+    ->defineMap('featured', $f->value('featured'))
+    ->defineMap('type', $f->value('type'))
+    ->defineMap('type-featured', function($v) { return [$v['type'], $v['value']]; }, 100)
 ;
 ```
-Then we can resolve values using `$matcher` as a callable:
+The `FluentFunction` simplifies the construction of maps, but it is completely optional. The number in the 
+third definition specify a priority. Default is `0`, so the last map has the highest priority. 
+
+Then you define the rules. Each rule is attached to a previously defined map and to an expected map value,
+and specifies a return value that will be returned when the rule matches:
 ```php
-//Prints "A man"
-echo $matcher(new Person('Nicolò', '1983-03-20', 'male'));
+$matcher
+    ->rule('type', 'book', 'book.html')
+    ->rule('type', 'dvd', 'dvd.html')
+    ->rule('featured', true, 'featured.html')
+    ->rule('type-featured', ['book', true], 'featured-book.html')
+    ->setDefault('item.html')
+;
+```
+The `setDefault` call define the value taht will be returned when no rule matches.
 
-//Prints "Gabba EHI!"
-echo $matcher(new Person('Gabba', '1983-09-06', 'female'));
+Now you can use your matcher:
+```php
+// Returns 'book.html'
+$matcher(['type' => 'book', 'featured' => false]);
 
-//Prints "A girl!"
-echo $matcher(new Person('Emma', '1994-01-01', 'female'));
+// Returns 'featured-book.html'
+$matcher(['type' => 'book', 'featured' => true]);
 
-//Prints "WTF, 100 years!"
-echo $matcher(new Person('Archibald', '1913-01-02', 'male'));
+// Returns 'featured.html'
+$matcher(['type' => 'dvd', 'featured' => true]);
+
+// Returns 'dvd.html'
+$matcher(['type' => 'dvd', 'featured' => false]);
+
+// Returns 'item.html'
+$matcher(['type' => 'cd', 'featured' => false]);
+```
+
+## Documentation
+### Summary
+A matcher is defined by a set of maps and a set of rules. 
+
+When you invoke the matcher,
+the input value is transformed by the registered map with highest priority. If there is
+a registered rule for that map that has the expected value (second argument of `rule` method)
+equal to the transformed value, then the matcher returns the return value of that rule 
+(third argument of the `rule` method).
+
+If no rules match for that map, the matcher will pass to the next (in priority order) map, and so on.
+
+When the matcher has cycled throughout all the registered maps without finding a matching rule,
+a default value is returned.
+
+### Maps
+You register a map with the `MapMatcher::defineMap()` method. The first argument is
+the map name that the rules will use to refer to the map, and the second is the real map, that
+can be any valid php callable:
+```php
+$matcher
+    ->defineMap('foo', function($v) { return $v->foo; })
+    ->defineMap('lowered', 'strtolower')
+    ->defineMap('method', [$object, 'method'])
+;
+    
+```
+`defineMap` accepts also a third optional argument to specify a priority. Default is `0`, and the rules
+that corresponds to higher priority maps will win. If two maps have the same priority, the first defined wins.
+```php
+$matcher
+    ->defineMap('bar', function($v) { return $v->bar; }, -100) //This will be the last checked
+    ->defineMap('baz', function($v) { return $v->baz; }, 100)  //This will be the first
+;
+    
+```
+
+With a `FluentFunction` you can define and compose more easily some very common callables:
+
+```php
+use UniversalMatcher\FluentFunction\FluentFunction;
+$f = new FluentFunction;
+
+// Returns a property of the input object
+$h = $f->prop('foo');
+$h($object); //Returns $object->foo;
+
+// Returns the return value of a method of the input object
+$h = $f->method('method');
+$h($object); //Returns $object->method();
+// ... with arguments too:
+$h = $f->method('method', $arg1, $arg2, ...);
+$h($object); //Returns $object->method($arg1, $arg2);
+
+//Returns the value of an array or of an `ArrayAccess` instance:
+$h = $f->method('key');
+$h(['key' => 'value']); //Returns 'value'
+
+//Regexpes
+$h = $f->regexp('/^[0-9]+$/');
+$h('abc0123'); // False
+$h('123456')   // True
 
 ```
+Concatenation is easy too:
+```php
+$h = $f->prop('foo')->method('method')->value('bar');
+$h($object); //Returns $object->foo->method()['bar']
+```
+
+## Rules
+A rule is composed of three arguments: the name of the map that will transform
+the input value, the expected returned value, and the value to be returned on match.
+
+The order of the rules, unlike the maps definitions, has no effect on matching.
+```
+$matcher
+    ->rule('foo', 'bar', '$object->foo is bar')
+    ->rule('foo', 'baz', '$object->foo is baz')
+    ->rule('lowered', 'string', 'strtolower($value) is "string"'
+;
+```
+If a map is intended to be used with only one rule, you can skip the definition of the map
+and directly define the rule with the `
 
 ## Performance considerations
 
