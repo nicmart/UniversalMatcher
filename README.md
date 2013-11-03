@@ -23,10 +23,10 @@ $matcher = (new MapMatcher)
 ;
 ```
 The `FluentFunction` simplifies the construction of maps, but it is completely optional. The number in the 
-third definition specify a priority. Default is `0`, so the last map has the highest priority. 
+third definition specifies a priority. Default is `0`, so the example above the last map has the highest priority. 
 
 Then you define the rules. Each rule is attached to a previously defined map and to an expected map value,
-and specifies a return value that will be returned when the rule matches:
+and specifies a value that will be returned when the rule matches:
 ```php
 $matcher
     ->rule('type', 'book', 'book.html')
@@ -36,7 +36,7 @@ $matcher
     ->setDefault('item.html')
 ;
 ```
-The `setDefault` call define the value taht will be returned when no rule matches.
+The `setDefault` call defines the value taht will be returned when no rule matches.
 
 Now you can use your matcher:
 ```php
@@ -66,7 +66,8 @@ a registered rule for that map that has the expected value (second argument of `
 equal to the transformed value, then the matcher returns the return value of that rule 
 (third argument of the `rule` method).
 
-If no rules match for that map, the matcher will pass to the next (in priority order) map, and so on.
+If no rules match for that map, the matcher will pass to the next (in priority order) map, 
+and so on until there is a rule match.
 
 When the matcher has cycled throughout all the registered maps without finding a matching rule,
 a default value is returned.
@@ -122,7 +123,7 @@ $h = $f->method('method', $arg1, $arg2, ...);
 $h($object); //Returns $object->method($arg1, $arg2);
 
 //Returns the value of an array or of an `ArrayAccess` instance:
-$h = $f->method('key');
+$h = $f->value('key');
 $h(['key' => 'value']); //Returns 'value'
 
 //Regexpes
@@ -181,7 +182,7 @@ as you can see, the cost is linear on the number of maps.
 I use `UniversalMatcher` in the [compiler definitions](https://github.com/comperio/DomainSpecificQuery/blob/master/src/DSQ/Compiler/MatcherCompiler.php#L35) 
 of the [DomainSpecificQuery](http://github.com/comperio/DomainSpecificQuery)
 component. The Universal matcher allowed us to minimize rules checks while mantaining maximum
-flexibility on the compiler definitions.
+flexibility on the compiler definition.
 
 
 ## Install
