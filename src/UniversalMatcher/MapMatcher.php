@@ -33,11 +33,11 @@ class MapMatcher implements Matcher
     private $default = null;
 
     /**
-     * @param null $noMatchValue
+     * @param null $defaultValue
      */
-    public function __construct($noMatchValue = null)
+    public function __construct($defaultValue = null)
     {
-        $this->default = $noMatchValue;
+        $this->default = $defaultValue;
     }
 
     /**

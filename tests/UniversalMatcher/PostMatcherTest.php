@@ -58,7 +58,7 @@ class PostMatcherTest extends \PHPUnit_Framework_TestCase
             }));
     }
 
-    public function testNoMatchValue()
+    public function testDefaultValue()
     {
         $this->assertEquals($this->matcher->getDefault(), $this->postMatcher->getDefault());
     }
