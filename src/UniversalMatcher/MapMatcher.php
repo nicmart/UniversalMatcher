@@ -162,6 +162,30 @@ class MapMatcher implements Matcher
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function matchAll($value)
+    {
+        $matches = array();
+
+        // Sort maps by descending priority if necessary
+        if (!$this->areMapsSorted) {
+            $this->sortMaps();
+            $this->areMapsSorted = true;
+        }
+
+        foreach ($this->maps as $name => $prioritizedMap) {
+            $map = $prioritizedMap->map;
+            $matchingValue = $this->serializeExpected(call_user_func($map, $value));
+
+            if (isset($this->rules[$name][$matchingValue]))
+                $matches[] = $this->rules[$name][$matchingValue];
+        }
+
+        return $matches;
+    }
+
+    /**
      * @param string $mapName
      * @param mixed $matchingValue
      * @return mixed

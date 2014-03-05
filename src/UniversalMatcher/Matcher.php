@@ -27,4 +27,12 @@ interface Matcher
      * @return mixed
      */
     public function match($value);
+
+    /**
+     * Find all matches for a given value (not only the first one)
+     *
+     * @param mixed $value
+     * @return array
+     */
+    public function matchAll($value);
 } 

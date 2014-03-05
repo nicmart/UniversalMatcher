@@ -53,6 +53,19 @@ abstract class PostMatcher implements Matcher
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function matchAll($value)
+    {
+        $matches = array();
+
+        foreach ($this->matcher->matchAll($value) as $matchResult) {
+            $matches[] = $this->transform($matchResult, $value, $this->matcher);
+        }
+        return $matches;
+    }
+
+    /**
      * @param mixed $matchResult    The value returned my match method of the underlyining Matcher
      * @param mixed $matchingValue  The input value of the match method
      * @param Matcher $matcher      The underlinying matcher

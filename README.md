@@ -9,6 +9,9 @@ in the matcher definition. The "match" is intended to be between the input value
 
 For installing instructions (composer!) please go to the end of this README
 
+## Changelog
+ - 0.1.1 Added matchAll method
+
 ## Example
 Instantiate the matcher, and define some maps:
 ```php
@@ -54,6 +57,10 @@ $matcher(['type' => 'dvd', 'featured' => false]);
 
 // Returns 'item.html'
 $matcher(['type' => 'cd', 'featured' => false]);
+
+// Find all matching values with matchAll method, ordered by priority:
+// This returns ['featured-book.html', 'featured.html', 'book.html']
+$matcher->matchAll(['type' => 'dvd', 'featured' => true]);
 ```
 
 ## Documentation
