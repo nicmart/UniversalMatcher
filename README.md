@@ -60,7 +60,7 @@ $matcher(['type' => 'cd', 'featured' => false]);
 
 // Find all matching values with matchAll method, ordered by priority:
 // This returns ['featured-book.html', 'featured.html', 'book.html']
-$matcher->matchAll(['type' => 'dvd', 'featured' => true]);
+$matcher->matchAll(['type' => 'book', 'featured' => true]);
 ```
 
 ## Documentation
