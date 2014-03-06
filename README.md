@@ -10,6 +10,7 @@ in the matcher definition. The "match" is intended to be between the input value
 For installing instructions (composer!) please go to the end of this README
 
 ## Changelog
+ - 0.2.0 Dropped php 5.3 support.
  - 0.1.1 Added matchAll method
 
 ## Example
@@ -201,7 +202,7 @@ Just create a composer.json file for your project:
 ```JSON
 {
     "require": {
-        "nicmart/universal-matcher": "dev-master"
+        "nicmart/universal-matcher": "~0.2"
     }
 }
 ```
