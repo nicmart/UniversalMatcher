@@ -17,9 +17,9 @@
         "satooshi/php-coveralls": "dev-master"
     },
     "autoload": {
-        "psr-0": {
-            "UniversalMatcher": "src/",
-            "UniversalMatcher\\Test": "tests"
+        "psr-4": {
+            "UniversalMatcher\\": "src/",
+            "UniversalMatcher\\Test\\": "tests"
         }
     }
 }
