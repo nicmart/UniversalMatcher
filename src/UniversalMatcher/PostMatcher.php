@@ -57,7 +57,7 @@ abstract class PostMatcher implements Matcher
      */
     public function matchAll($value)
     {
-        $matches = array();
+        $matches = [];
 
         foreach ($this->matcher->matchAll($value) as $matchResult) {
             $matches[] = $this->transform($matchResult, $value, $this->matcher);

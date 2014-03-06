@@ -48,12 +48,12 @@ class PostMatcherTest extends \PHPUnit_Framework_TestCase
         $this->matcher
             ->expects($this->any())
             ->method('matchAll')
-            ->will($this->returnValue(array('foo', 'bar')))
+            ->will($this->returnValue(['foo', 'bar']))
         ;
 
         $this->postMatcher = $this->getMockBuilder('UniversalMatcher\PostMatcher')
-            ->setConstructorArgs(array($this->matcher))
-            ->setMethods(array('transform'))
+            ->setConstructorArgs([$this->matcher])
+            ->setMethods(['transform'])
             ->getMock()
         ;
 
@@ -77,7 +77,7 @@ class PostMatcherTest extends \PHPUnit_Framework_TestCase
 
     public function testMatchAll()
     {
-        $this->assertEquals(array('dummy:FOO', 'dummy:BAR'), $this->postMatcher->matchAll('dummy'));
+        $this->assertEquals(['dummy:FOO', 'dummy:BAR'], $this->postMatcher->matchAll('dummy'));
     }
 
     public function testMatchWhenInnerMatcherDoesNotMatch()

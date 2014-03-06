@@ -68,16 +68,13 @@ class MapMatcher implements Matcher
      * @throws InvalidMatcherException
      * @return $this
      */
-    public function defineMap($name, $map, $priority = 0)
+    public function defineMap($name, callable $map, $priority = 0)
     {
-        if (!is_callable($map))
-            throw new InvalidMatcherException('Hasher must be a callable');
-
         $this->areMapsSorted = false;
         $this->maps[$name] = new PrioritizedMap($map, $priority, count($this->maps));
 
         if (!isset($this->rules[$name]))
-            $this->rules[$name] = array();
+            $this->rules[$name] = [];
 
         return $this;
     }
@@ -127,7 +124,7 @@ class MapMatcher implements Matcher
      *
      * @return $this
      */
-    public function callbackRule($callback, $expected, $value, $priority = 0)
+    public function callbackRule(callable $callback, $expected, $value, $priority = 0)
     {
         $key = is_string($callback) ? $callback : $this->getFreeKey();
 
@@ -166,7 +163,7 @@ class MapMatcher implements Matcher
      */
     public function matchAll($value)
     {
-        $matches = array();
+        $matches = [];
 
         // Sort maps by descending priority if necessary
         if (!$this->areMapsSorted) {

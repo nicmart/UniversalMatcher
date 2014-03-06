@@ -19,10 +19,6 @@ class FluentFunctionTest extends \PHPUnit_Framework_TestCase
         $f = new FluentFunction('strtoupper');
 
         $this->assertEquals('ABCDEF', $f('aBcDEf'));
-
-        $g = new FluentFunction;
-        $this->setExpectedException('DomainException');
-        $g('test');
     }
 
     public function testFunc()
@@ -48,7 +44,7 @@ class FluentFunctionTest extends \PHPUnit_Framework_TestCase
     {
         $f = FluentFunction::f()->value('foo')->value('bar');
 
-        $this->assertEquals('baz', $f(array('foo' => array('bar' => 'baz'))));
+        $this->assertEquals('baz', $f(['foo' => ['bar' => 'baz']]));
     }
 
     public function testRegexp()

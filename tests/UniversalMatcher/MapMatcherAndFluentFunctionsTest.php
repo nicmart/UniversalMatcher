@@ -30,15 +30,15 @@ class MapMatcherAndFluentFunctionTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             'aaa',
-            $matcher(array('foo' => 'foo1', 'bar' => array('baz' => 'baz1')))
+            $matcher(['foo' => 'foo1', 'bar' => ['baz' => 'baz1']])
         );
         $this->assertEquals(
             'bbb',
-            $matcher(array('foo' => 'foo2', 'bar' => array('baz' => 'baz1')))
+            $matcher(['foo' => 'foo2', 'bar' => ['baz' => 'baz1']])
         );
         $this->assertEquals(
             'ccc',
-            $matcher(array('foo' => 'foo3', 'bar' => array('baz' => 'baz1')))
+            $matcher(['foo' => 'foo3', 'bar' => ['baz' => 'baz1']])
         );
     }
 }

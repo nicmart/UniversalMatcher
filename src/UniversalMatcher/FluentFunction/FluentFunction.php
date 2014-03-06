@@ -26,10 +26,10 @@ class FluentFunction
 
     /**
      * Provide a fluent way to create FluentFlunction
-     * @param null $callable
+     * @param callable $callable
      * @return static
      */
-    public static function f($callable = null)
+    public static function f(callable $callable = null)
     {
         return new static($callable);
     }
@@ -37,7 +37,7 @@ class FluentFunction
     /**
      * @param callable $callable
      */
-    public function __construct($callable = null)
+    public function __construct(callable $callable = null)
     {
         $this->callable = $callable;
     }
@@ -48,14 +48,13 @@ class FluentFunction
      * @param callable $callable
      * @return FluentFunction
      */
-    public function func($callable)
+    public function func(callable $callable)
     {
         if ($this->callable === null)
             return new static($callable);
-        $that = $this;
 
-        return new static(function() use ($callable, $that) {
-              return call_user_func($callable, call_user_func_array($that, func_get_args()));
+        return new static(function() use ($callable) {
+              return call_user_func($callable, call_user_func_array($this, func_get_args()));
         });
     }
 
@@ -82,7 +81,7 @@ class FluentFunction
         $args = array_slice(func_get_args(), 1);
 
         return $this->func(function($object) use ($methodName, $args) {
-            return call_user_func_array(array($object, $methodName), $args);
+            return call_user_func_array([$object, $methodName], $args);
         });
     }
 
@@ -169,9 +168,6 @@ class FluentFunction
      */
     public function __invoke()
     {
-        if (!is_callable($this->callable))
-            throw new \DomainException('Not a valid callable');
-
         return call_user_func_array($this->callable, func_get_args());
     }
 } 

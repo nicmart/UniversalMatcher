@@ -55,12 +55,12 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
             ->rule('last', 'y', 'finishes with y')
         ;
 
-        $this->assertEquals(array('starts with a', 'finishes with b'), $engine->matchAll('aaaaaab'));
-        $this->assertEquals(array('starts with x', 'finishes with y'), $engine->matchAll('xaaaaay'));
-        $this->assertEquals(array('finishes with b'), $engine->matchAll('caaaaab'));
-        $this->assertEquals(array('finishes with y'), $engine->matchAll('caaaaay'));
+        $this->assertEquals(['starts with a', 'finishes with b'], $engine->matchAll('aaaaaab'));
+        $this->assertEquals(['starts with x', 'finishes with y'], $engine->matchAll('xaaaaay'));
+        $this->assertEquals(['finishes with b'], $engine->matchAll('caaaaab'));
+        $this->assertEquals(['finishes with y'], $engine->matchAll('caaaaay'));
 
-        $this->assertEquals(array(), $engine->matchAll('zzz'));
+        $this->assertEquals([], $engine->matchAll('zzz'));
     }
 
     public function testMatchWithPriorities()
@@ -166,8 +166,8 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $matcher = new MapMatcher;
 
         $matcher
-            ->defineMap('test', function() { return array('a', 'b'); })
-            ->rule('test', array('a', 'b'), 'Bingo!')
+            ->defineMap('test', function() { return ['a', 'b']; })
+            ->rule('test', ['a', 'b'], 'Bingo!')
         ;
 
         $this->assertEquals('Bingo!', $matcher('any value'));
