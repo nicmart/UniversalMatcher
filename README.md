@@ -10,7 +10,7 @@ in the matcher definition. The "match" is intended to be between the input value
 For installing instructions (composer!) please go to the end of this README
 
 ## Changelog
- - 0.2.0 Dropped php 5.3 support.
+ - 0.2.0 Dropped php 5.3 support, PSR-4 autoloading
  - 0.1.1 Added matchAll method
 
 ## Example
