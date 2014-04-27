@@ -71,6 +71,37 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('starts with b', $engine->match('bbaaaabaaax'));
     }
 
+    public function testHierarchicalMatchWithRuleStack()
+    {
+        $engine = new MapMatcher();
+
+        $firstLetter = function ($string) { return $string[0]; };
+        $lastLetter = function ($string) { return substr($string, -1); };
+        $secondLetter = function ($string) { return $string[2]; };
+
+        $engine
+            ->defineMap('first', $firstLetter)
+            ->defineMap('last', $lastLetter)
+            ->defineMap('second', $secondLetter)
+            ->rule('first', 'a')
+                ->rule('last', 'a')
+                    ->setDefault('starts and finishes with a')
+                    ->rule('second', 'a', 'starts with aa and finishes with a')
+                    ->rule('second', 'b', 'starts with ab and finishes with a')
+                ->end()
+                ->rule('last', 'b', 'starts with a and finishes with b')
+                ->setDefault('starts with a')
+            ->end()
+            ->rule('first', 'b', 'starts with b')
+        ;
+
+        $this->assertEquals('starts with a and finishes with b', $engine->match('aaaaaab'));
+        $this->assertEquals('starts with aa and finishes with a', $engine->match('aaaaaabaaa'));
+        $this->assertEquals('starts with aa and finishes with a', $engine->match('abaaaabaaa'));
+        $this->assertEquals('starts with a', $engine->match('abaaaabaaax'));
+        $this->assertEquals('starts with b', $engine->match('bbaaaabaaax'));
+    }
+
     public function testMatchWithCallableReturnValue()
     {
         $engine = new MapMatcher();
@@ -264,4 +295,26 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($n, call_user_func($matcher->getDefault()));
     }
+
+    public function testEnd()
+    {
+        new \UnderflowException();
+
+        $matcher = (new MapMatcher)
+            ->defineMap('map', function() { return 'a'; })
+        ;
+
+        $submatcher = $matcher->rule('map', 'a');
+
+        $this->assertNotEquals($matcher, $submatcher);
+
+        $main = $submatcher->end();
+
+        $this->assertSame($main, $matcher);
+
+        $this->setExpectedException('\UnderflowException');
+
+        $matcher->end();
+    }
+
 }

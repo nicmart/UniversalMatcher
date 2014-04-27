@@ -33,6 +33,11 @@ class MapMatcher implements Matcher
     private $default = null;
 
     /**
+     * @var static
+     */
+    private $parent = null;
+
+    /**
      * @param null $defaultValue
      */
     public function __construct($defaultValue = null)
@@ -116,7 +121,7 @@ class MapMatcher implements Matcher
      *                          on match, passing the matching value as parameter
      * @return $this            The current instance
      */
-    public function rule($map, $expected, $value)
+    public function rule($map, $expected, $value = null)
     {
         if (is_callable($map)) {
             if (is_string($map)) {
@@ -127,10 +132,16 @@ class MapMatcher implements Matcher
             }
         }
 
-        $valueCallback = is_callable($value) ? $value : $this->func($value);
+        if (isset($value)) {
+            $valueCallback = is_callable($value) ? $value : $this->func($value);
+        } else {
+            $valueCallback = $this->linkedMatcher();
+            $valueCallback->parent = $this;
+        }
+
         $this->rules[$map][$this->serializeExpected($expected)] = $valueCallback;
 
-        return $this;
+        return isset($value) ? $this : $valueCallback;
     }
 
     /**
@@ -217,6 +228,19 @@ class MapMatcher implements Matcher
 
         $defaultCallback = $this->getDefault();
         return $defaultCallback($fakeValue);
+    }
+
+    /**
+     * @return static
+     *
+     * @throws \UnderflowException
+     */
+    public function end()
+    {
+        if (isset($this->parent))
+            return $this->parent;
+
+        throw new \UnderflowException("We are already at the end of the stack");
     }
 
     /**
