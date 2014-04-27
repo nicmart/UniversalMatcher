@@ -134,8 +134,8 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('starts with x', $engine->matchByMapValue('first', 'x'));
         $this->assertEquals('finishes with b', $engine->matchByMapValue('last', 'b'));
         $this->assertEquals('finishes with y', $engine->matchByMapValue('last', 'y'));
-        $this->assertEquals($engine->getDefault(), $engine->matchByMapValue('last', 'xxx'));
-        $this->assertEquals($engine->getDefault(), $engine->matchByMapValue('xxx', 'xxx'));
+        $this->assertEquals(call_user_func($engine->getDefault()), $engine->matchByMapValue('last', 'xxx'));
+        $this->assertEquals(call_user_func($engine->getDefault()), $engine->matchByMapValue('xxx', 'xxx'));
     }
 
     public function testCallbackRules()
@@ -204,5 +204,32 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(0, $matcher->priority('a'));
         $this->assertEquals(100, $matcher->priority('b'));
         $this->assertEquals(-100, $matcher->priority('c'));
+    }
+
+    public function testLinkedMatcher()
+    {
+        $matcher = new MapMatcher($n = new None);
+
+        $matcher
+            ->defineMap('a', function(){ return '1'; })
+            ->defineMap('b', function(){ return '2'; })
+            ->rule('a', '1', 'v1')
+            ->rule('b', '2', 'v2')
+        ;
+
+        $linked = $matcher->linkedMatcher()
+            ->defineMap('c', function(){ return '3'; })
+            ->rule('a', '3', 'v3');
+
+        $this->assertSame($matcher->getMap('a'), $matcher->getMap('a'));
+        $this->assertSame($matcher->getMap('b'), $matcher->getMap('b'));
+        $this->assertSame($matcher->getMap('c'), $matcher->getMap('c'));
+
+        $this->assertSame($n, $matcher->matchByMapValue('a', '3'));
+        $this->assertSame($n, $linked->matchByMapValue('a', '1'));
+
+        $linked->setDefault("Different default");
+
+        $this->assertSame($n, call_user_func($matcher->getDefault()));
     }
 }

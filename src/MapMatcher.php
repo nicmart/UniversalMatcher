@@ -80,8 +80,25 @@ class MapMatcher implements Matcher
     }
 
     /**
-     * @param $mapName
+     * @param string $mapName
+     *
      * @return mixed
+     *
+     * @throws \OutOfBoundsException
+     */
+    public function getMap($mapName)
+    {
+        if (isset($this->maps[$mapName]))
+            return $this->maps[$mapName];
+
+        throw new \OutOfBoundsException("There is no map registered with the name \"$mapName\"");
+    }
+
+    /**
+     * @param string $mapName
+     *
+     * @return mixed
+     *
      * @throws \OutOfBoundsException
      */
     public function priority($mapName)
@@ -198,7 +215,8 @@ class MapMatcher implements Matcher
         if (isset($this->rules[$mapName][$matchingValue]))
             return $this->rules[$mapName][$matchingValue]($fakeValue);
 
-        return $this->getDefault();
+        $defaultCallback = $this->getDefault();
+        return $defaultCallback($fakeValue);
     }
 
     /**
@@ -221,6 +239,23 @@ class MapMatcher implements Matcher
     public function func($value)
     {
         return function() use ($value) { return $value; };
+    }
+
+    /**
+     * Returns a matcher that has the exactly same set of maps,
+     * but different set of rules.
+     *
+     * @return MapMatcher
+     */
+    public function linkedMatcher()
+    {
+        /** @var MapMatcher $matcher */
+        $matcher = new static($this->default);
+
+        $matcher->maps =& $this->maps;
+        $matcher->areMapsSorted =& $this->areMapsSorted;
+
+        return $matcher;
     }
 
     /**
