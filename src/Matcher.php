@@ -16,7 +16,7 @@ interface Matcher
     /**
      * The value returned when there is no match
      *
-     * @return mixed
+     * @return callable
      */
     public function getDefault();
 

@@ -37,7 +37,7 @@ class MapMatcher implements Matcher
      */
     public function __construct($defaultValue = null)
     {
-        $this->default = $defaultValue;
+        $this->setDefault($defaultValue);
     }
 
     /**
@@ -49,12 +49,12 @@ class MapMatcher implements Matcher
     }
 
     /**
-     * @param mixed $value
+     * @param callable|mixed $value
      * @return $this
      */
     public function setDefault($value)
     {
-        $this->default = $value;
+        $this->default = is_callable($value) ? $value : $this->func($value);
 
         return $this;
     }
@@ -95,7 +95,8 @@ class MapMatcher implements Matcher
     /**
      * @param string|callable $map  The name of a registered map or a callable
      * @param mixed $expected   The expected matching value
-     * @param mixed $value      The value that will be returned on match
+     * @param mixed $value      The value that will be returned on match, or a callable that will be called
+     *                          on match, passing the matching value as parameter
      * @return $this            The current instance
      */
     public function rule($map, $expected, $value)
@@ -109,7 +110,8 @@ class MapMatcher implements Matcher
             }
         }
 
-        $this->rules[$map][$this->serializeExpected($expected)] = $value;
+        $valueCallback = is_callable($value) ? $value : $this->func($value);
+        $this->rules[$map][$this->serializeExpected($expected)] = $valueCallback;
 
         return $this;
     }
@@ -152,10 +154,11 @@ class MapMatcher implements Matcher
             $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
             if (isset($this->rules[$name][$matchingValue]))
-                return $this->rules[$name][$matchingValue];
+                return $this->rules[$name][$matchingValue]($value);
         }
+        $def = $this->getDefault();
 
-        return $this->getDefault();
+        return $def($value);
     }
 
     /**
@@ -176,21 +179,24 @@ class MapMatcher implements Matcher
             $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
             if (isset($this->rules[$name][$matchingValue]))
-                $matches[] = $this->rules[$name][$matchingValue];
+                $matches[] = $this->rules[$name][$matchingValue]($value);
         }
 
         return $matches;
     }
 
     /**
+     * Retrieve a the return value linked to a map value
+     *
      * @param string $mapName
      * @param mixed $matchingValue
+     * @param mixed $fakeValue
      * @return mixed
      */
-    public function matchByMapValue($mapName, $matchingValue)
+    public function matchByMapValue($mapName, $matchingValue, $fakeValue = null)
     {
         if (isset($this->rules[$mapName][$matchingValue]))
-            return $this->rules[$mapName][$matchingValue];
+            return $this->rules[$mapName][$matchingValue]($fakeValue);
 
         return $this->getDefault();
     }
@@ -203,6 +209,18 @@ class MapMatcher implements Matcher
     public function __invoke($value)
     {
         return $this->match($value);
+    }
+
+    /**
+     * Wrap a value with a callable that returns that value
+     *
+     * @param mixed $value
+     *
+     * @return callable
+     */
+    public function func($value)
+    {
+        return function() use ($value) { return $value; };
     }
 
     /**
