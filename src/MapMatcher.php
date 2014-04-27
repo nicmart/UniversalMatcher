@@ -181,8 +181,11 @@ class MapMatcher implements Matcher
             $map = $prioritizedMap->map;
             $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
-            if (isset($this->rules[$name][$matchingValue]))
-                return $this->rules[$name][$matchingValue]($value);
+            if (isset($this->rules[$name][$matchingValue])) {
+                $return = $this->rules[$name][$matchingValue]($value);
+                if (!$return instanceof None)
+                    return $return;
+            }
         }
         $def = $this->getDefault();
 
@@ -274,7 +277,7 @@ class MapMatcher implements Matcher
     public function linkedMatcher()
     {
         /** @var MapMatcher $matcher */
-        $matcher = new static($this->default);
+        $matcher = new static(new None);
 
         $matcher->maps =& $this->maps;
         $matcher->areMapsSorted =& $this->areMapsSorted;

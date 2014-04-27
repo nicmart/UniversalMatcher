@@ -102,6 +102,27 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('starts with b', $engine->match('bbaaaabaaax'));
     }
 
+    public function testHierarchicalMatchDoesNotStopAtFirstCompositeRule()
+    {
+        $engine = new MapMatcher();
+
+        $firstLetter = function ($string) { return $string[0]; };
+        $lastLetter = function ($string) { return substr($string, -1); };
+        $secondLetter = function ($string) { return $string[2]; };
+
+        $engine
+            ->defineMap('first', $firstLetter)
+            ->defineMap('last', $lastLetter)
+            ->defineMap('second', $secondLetter)
+            ->rule('first', 'a')
+                ->rule('last', 'x', 'starts with a and finishes with x')
+            ->end()
+            ->rule('last', 'b', 'last is b')
+        ;
+
+        $this->assertEquals('last is b', $engine->match('aaaaaab'));
+    }
+
     public function testMatchWithCallableReturnValue()
     {
         $engine = new MapMatcher();
@@ -289,7 +310,7 @@ class MapMatcherTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($matcher->getMap('c'), $matcher->getMap('c'));
 
         $this->assertSame($n, $matcher->matchByMapValue('a', '3'));
-        $this->assertSame($n, $linked->matchByMapValue('a', '1'));
+        $this->assertSame(call_user_func($linked->getDefault()), $linked->matchByMapValue('a', '1'));
 
         $linked->setDefault("Different default");
 
