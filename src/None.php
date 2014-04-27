@@ -13,7 +13,7 @@ namespace UniversalMatcher;
 /**
  * Class None
  * An empty class that can be used when no value is matched in the engine
- * @package PhpRulez
+ * @package UniversalMatcher
  */
 class None
 {

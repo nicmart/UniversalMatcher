@@ -11,7 +11,7 @@
          bootstrap="vendor/autoload.php"
 >
     <testsuites>
-        <testsuite name="PhpRulez test suite">
+        <testsuite name="UniversalMatcher test suite">
             <directory>./tests/</directory>
         </testsuite>
     </testsuites>
