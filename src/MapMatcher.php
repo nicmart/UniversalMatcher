@@ -209,8 +209,11 @@ class MapMatcher implements Matcher
             $map = $prioritizedMap->map;
             $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
-            if (isset($this->rules[$name][$matchingValue]))
-                $matches[] = $this->rules[$name][$matchingValue]($value);
+            if (isset($this->rules[$name][$matchingValue])) {
+                $return = $this->rules[$name][$matchingValue]($value);
+                if (!$return instanceof None)
+                    $matches[] = $return;
+            }
         }
 
         return $matches;
