@@ -20,6 +20,16 @@ class MapMatcher implements Matcher
      */
     private $maps;
 
+    /**
+     * The set of maps that have at least one rule attached
+     * @var array[PrioritizedMap]
+     */
+    private $activeMaps;
+
+    /**
+     * Tells if the $activeMaps array is sorted by priority
+     * @var bool
+     */
     private $areMapsSorted = true;
 
     /**
@@ -141,6 +151,8 @@ class MapMatcher implements Matcher
 
         $this->rules[$map][$this->serializeExpected($expected)] = $valueCallback;
 
+        $this->activateMap($map);
+
         return isset($value) ? $this : $valueCallback;
     }
 
@@ -177,7 +189,7 @@ class MapMatcher implements Matcher
             $this->areMapsSorted = true;
         }
 
-        foreach ($this->maps as $name => $prioritizedMap) {
+        foreach ($this->activeMaps as $name => $prioritizedMap) {
             $map = $prioritizedMap->map;
             $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
@@ -205,7 +217,7 @@ class MapMatcher implements Matcher
             $this->areMapsSorted = true;
         }
 
-        foreach ($this->maps as $name => $prioritizedMap) {
+        foreach ($this->activeMaps as $name => $prioritizedMap) {
             $map = $prioritizedMap->map;
             $matchingValue = $this->serializeExpected(call_user_func($map, $value));
 
@@ -283,7 +295,6 @@ class MapMatcher implements Matcher
         $matcher = new static(new None);
 
         $matcher->maps =& $this->maps;
-        $matcher->areMapsSorted =& $this->areMapsSorted;
 
         return $matcher;
     }
@@ -319,10 +330,21 @@ class MapMatcher implements Matcher
      */
     private function sortMaps()
     {
-        uasort($this->maps, function(PrioritizedMap $m1, PrioritizedMap $m2) {
+        uasort($this->activeMaps, function(PrioritizedMap $m1, PrioritizedMap $m2) {
             if ($p = $m2->priority - $m1->priority)
                 return $p;
             return $m1->priority2 - $m2->priority2;
         });
+    }
+
+    /**
+     * Put a map to the activate map array
+     *
+     * @param string $mapName
+     */
+    private function activateMap($mapName)
+    {
+        if (!isset($this->activeMaps[$mapName]))
+            $this->activeMaps[$mapName] = $this->maps[$mapName];
     }
 }
